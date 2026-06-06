@@ -27,23 +27,24 @@ export const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window
 camera.rotation.order = 'YXZ';
 camera.position.set(CONFIG.SPAWN.x, CONFIG.FLOOR_Y + CONFIG.EYE_HEIGHT, CONFIG.SPAWN.z);
 
-/* ---- lights (the model's emissive materials carry the neon; these light surfaces) ---- */
-scene.add(new THREE.AmbientLight(0x3a4663, 0.55));
-scene.add(new THREE.HemisphereLight(0x5d6f9c, 0x0a0b12, 0.65));
+/* ---- lights (the model's emissive materials carry the neon; these only gently
+       fill the surfaces, kept low so the scene doesn't blow out to white) ---- */
+scene.add(new THREE.AmbientLight(0x3a4663, 0.22));
+scene.add(new THREE.HemisphereLight(0x5d6f9c, 0x0a0b12, 0.3));
 
-const key = new THREE.DirectionalLight(0xfff0d8, 0.55);
+const key = new THREE.DirectionalLight(0xfff0d8, 0.3);
 key.position.set(2, 6, 3);
 scene.add(key);
 
-const warm = new THREE.PointLight(0xffd9a8, 14, 9, 2.0);
+const warm = new THREE.PointLight(0xffd9a8, 4, 9, 2.0);
 warm.position.set(0, 2.6, 0);
 scene.add(warm);
 
-const acc1 = new THREE.PointLight(0x3fa0ff, 10, 8, 2.0);
+const acc1 = new THREE.PointLight(0x3fa0ff, 3, 8, 2.0);
 acc1.position.set(-3, 1.8, -2.5);
 scene.add(acc1);
 
-const acc2 = new THREE.PointLight(0xff3ea5, 7, 7, 2.0);
+const acc2 = new THREE.PointLight(0xff3ea5, 2.5, 7, 2.0);
 acc2.position.set(3, 1.6, 3.0);
 scene.add(acc2);
 
@@ -52,11 +53,12 @@ export const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 
 // UnrealBloomPass(resolution, strength, radius, threshold)
+// Higher threshold => only genuinely bright neon blooms, not every lit surface.
 export const bloom = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  0.6,
-  0.55,
-  0.85,
+  0.32,
+  0.5,
+  0.95,
 );
 composer.addPass(bloom);
 composer.addPass(new OutputPass());

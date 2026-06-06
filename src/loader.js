@@ -58,10 +58,8 @@ function onLoaded(root) {
     mats.forEach((m) => {
       if (!m) return;
       m.side = THREE.DoubleSide; // no see-through walls
-      if (m.emissive) {
-        const e = m.emissive.r + m.emissive.g + m.emissive.b;
-        if (e > 0.01) m.emissiveIntensity = (m.emissiveIntensity || 1) * 1.5; // punch up neon for bloom
-      }
+      // Keep the model's authored emissive as-is. Boosting it here is what
+      // washed the room out to white, so we leave the neon at its baked level.
     });
   });
   scene.add(root);
