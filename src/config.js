@@ -13,9 +13,10 @@ export const CONFIG = {
   SPAWN: { x: 0, z: 3.0, yaw: 0 }, // start near the door, looking into the room
 
   // Object-name prefixes (case-insensitive) to strip from the model on load.
-  // Empty => nothing removed; the full room is shown. Add prefixes here to
-  // hide objects, e.g. ['Bed', 'Mattress'] to remove the bed.
-  HIDE_OBJECTS: [],
+  // P1_/P2_/P3_ are stray 2x2x2 boxes stacked at the room center (origin):
+  // the pink (P1/P2) and lavender (P3) surfaces in the middle of the floor.
+  // These are NOT the wall posters (Poster1/2/3_*), which stay intact.
+  HIDE_OBJECTS: ['P1_', 'P2_', 'P3_'],
 
   // The floor's 'Floor_Wood' material ships as flat white. Tint it a warm
   // wood brown so it reads as a wooden floor. Set to null to leave untinted.
