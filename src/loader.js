@@ -5,6 +5,7 @@ import { state } from './state.js';
 import { scene, camera } from './scene.js';
 import { applyLook } from './controls.js';
 import { createGalaxyMaterial } from './skyMaterial.js';
+import { createChessFloorMaterial } from './floorMaterial.js';
 
 const loader = new GLTFLoader();
 
@@ -72,7 +73,13 @@ function onLoaded(root) {
       return;
     }
 
-    const isFloor = (o.name || '').toLowerCase().startsWith('floor');
+    // Floor: replace with a lit chessboard pattern.
+    if ((o.name || '').toLowerCase().startsWith('floor')) {
+      (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m?.dispose?.());
+      o.material = createChessFloorMaterial();
+      return;
+    }
+
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     mats.forEach((m) => {
       if (!m) return;
@@ -82,11 +89,6 @@ function onLoaded(root) {
         m.emissive.setRGB(0, 0, 0);
         m.emissiveIntensity = 0;
         if (m.emissiveMap) m.emissiveMap = null;
-        m.needsUpdate = true;
-      }
-      // Tint the flat-white floor a warm wood tone.
-      if (isFloor && CONFIG.FLOOR_COLOR != null && m.color) {
-        m.color.setHex(CONFIG.FLOOR_COLOR);
         m.needsUpdate = true;
       }
     });

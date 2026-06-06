@@ -18,9 +18,10 @@ export const CONFIG = {
   // None of these are the wall posters (Poster1/2/3_*), which stay intact.
   HIDE_OBJECTS: ['P1_', 'P2_', 'P3_', 'Rug'],
 
-  // The floor's 'Floor_Wood' material ships as flat white. Tint it a warm
-  // wood brown so it reads as a wooden floor. Set to null to leave untinted.
-  FLOOR_COLOR: 0x6b4f3a,
+  // The floor is rendered as a lit chessboard. `size` is the square edge in
+  // metres (8x8 m floor with size 1 => an 8x8 board); light/dark are the
+  // square colours.
+  FLOOR_CHESS: { size: 1.0, light: 0xd5d8de, dark: 0x14161d },
 
   RUN_MULT: 1.9, // walk-speed multiplier while running
   LOOK_DRAG: 0.0042, // mouse drag look sensitivity
