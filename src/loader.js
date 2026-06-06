@@ -49,7 +49,7 @@ export function loadModel(url, isBlob = false) {
 }
 
 function onLoaded(root) {
-  // Make the shell solid from the inside and let the neon bloom.
+  // Make the shell solid from the inside and strip any emissive glow.
   root.traverse((o) => {
     if (!o.isMesh) return;
     o.castShadow = false;
@@ -58,8 +58,13 @@ function onLoaded(root) {
     mats.forEach((m) => {
       if (!m) return;
       m.side = THREE.DoubleSide; // no see-through walls
-      // Keep the model's authored emissive as-is. Boosting it here is what
-      // washed the room out to white, so we leave the neon at its baked level.
+      // Neon removed: switch off any emissive glow baked into the model.
+      if (m.emissive) {
+        m.emissive.setRGB(0, 0, 0);
+        m.emissiveIntensity = 0;
+        if (m.emissiveMap) m.emissiveMap = null;
+        m.needsUpdate = true;
+      }
     });
   });
   scene.add(root);

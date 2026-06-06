@@ -1,7 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import { CONFIG } from './config.js';
-import { attachRenderer, onResize, composer } from './scene.js';
+import { attachRenderer, onResize, render } from './scene.js';
 import { initControls, updateMovement } from './controls.js';
 import { initUI } from './ui.js';
 import { loadModel } from './loader.js';
@@ -16,7 +16,7 @@ const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
   updateMovement(Math.min(clock.getDelta(), 0.05)); // cap dt to avoid jumps after tab-switch
-  composer.render();
+  render();
 }
 animate();
 

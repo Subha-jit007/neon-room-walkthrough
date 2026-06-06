@@ -1,6 +1,6 @@
 import { CONFIG, settings, clamp } from './config.js';
 import { state } from './state.js';
-import { renderer, bloom, camera } from './scene.js';
+import { renderer, camera } from './scene.js';
 import { applyLook } from './controls.js';
 import { loadModel } from './loader.js';
 
@@ -30,16 +30,11 @@ function initFullscreen() {
 /* ---- display + speed sliders ---- */
 function initSliders() {
   const exp = document.getElementById('exp');
-  const bl = document.getElementById('bloom');
   const spd = document.getElementById('speed');
 
   exp.addEventListener('input', () => {
     renderer.toneMappingExposure = +exp.value;
     document.getElementById('vExp').textContent = (+exp.value).toFixed(2);
-  });
-  bl.addEventListener('input', () => {
-    bloom.strength = +bl.value;
-    document.getElementById('vBloom').textContent = (+bl.value).toFixed(2);
   });
   spd.addEventListener('input', () => {
     settings.moveSpeed = +spd.value;
