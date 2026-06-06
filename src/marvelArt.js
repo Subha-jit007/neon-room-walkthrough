@@ -485,23 +485,33 @@ function makeMarvelTexture(kind) {
 
 /* ---------- mounted gallery on the left wall ---------- */
 
+const texLoader = new THREE.TextureLoader();
+function imageTexture(file) {
+  const t = texLoader.load(`${import.meta.env.BASE_URL}posters/${file}`);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  return t;
+}
+
 // Hung on the left wall (inner face ~X=-3.9, facing +X into the room) around the
-// untouched Spider-Man poster (Z=-0.8, big/high). The new pieces alternate
-// small+low / big+high so the whole wall reads as a zig-zag rhythm:
-//   Iron Man (small, low) — [Spider-Man] — Natasha (small, low) — Cap (big, high)
+// untouched Spider-Man poster (Z=-0.8, big/high). Pieces alternate low / high so
+// the whole wall reads as a zig-zag rhythm:
+//   Tony Stark (low) — [Spider-Man] — Born to Die (low) — Cap shield (high)
+// The two low pieces are real image posters; Cap is drawn procedurally.
 export function createMarvelPaintings() {
   const grp = new THREE.Group();
-  const BIG = { w: 1.02, h: 1.22, y: 2.0 }; // high
-  const SMALL = { w: 0.82, h: 0.98, y: 1.5 }; // low
+  const IMG_AR = 736 / 1308; // supplied posters are tall ~9:16 portraits
+  const ih = 1.08; // image-poster height
+  // [texture, w, h, y, z]
   const pieces = [
-    ['ironman', -2.4, SMALL],
-    ['natasha', 0.7, SMALL],
-    ['cap', 2.2, BIG],
+    [imageTexture('tony-stark.jpg'), ih * IMG_AR, ih, 1.5, -2.4], // low (was Iron Man)
+    [imageTexture('born-to-die.jpg'), ih * IMG_AR, ih, 1.5, 0.7], // low (was Natasha)
+    [makeMarvelTexture('cap'), 1.02, 1.22, 2.0, 2.2], // big / high
   ];
-  for (const [kind, z, s] of pieces) {
-    const p = framedPiece(makeMarvelTexture(kind), s.w, s.h);
+  for (const [tex, w, h, y, z] of pieces) {
+    const p = framedPiece(tex, w, h);
     p.rotation.y = Math.PI / 2; // local +Z -> world +X (faces the room)
-    p.position.set(-3.88, s.y, z);
+    p.position.set(-3.88, y, z);
     grp.add(p);
   }
   return grp;
