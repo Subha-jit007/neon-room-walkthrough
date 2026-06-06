@@ -8,6 +8,8 @@ import { createGalaxyMaterial } from './skyMaterial.js';
 import { createChessFloorMaterial } from './floorMaterial.js';
 import { createScreenMaterial } from './screenVideo.js';
 import { createWallArt, createFlowerPaintings } from './wallArt.js';
+import { createMarvelPaintings } from './marvelArt.js';
+import { createSwordDisplay } from './swords.js';
 
 const loader = new GLTFLoader();
 
@@ -117,6 +119,13 @@ function onLoaded(root) {
   // flanked by two smaller Japanese flower paintings (peony + iris).
   scene.add(createWallArt());
   scene.add(createFlowerPaintings());
+
+  // Marvel / Avengers comic-art gallery on the left wall, beside the original
+  // Spider-Man poster (which is left untouched).
+  scene.add(createMarvelPaintings());
+
+  // Mount a detailed daishō (katana + wakizashi) on the door/front wall.
+  scene.add(createSwordDisplay());
 
   // Derive interior movement bounds from the model's bounding box.
   const box = new THREE.Box3().setFromObject(root);

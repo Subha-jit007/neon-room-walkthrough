@@ -628,7 +628,7 @@ function makeFlowerTexture(kind) {
 // print itself (a standard material so it sits under the room lighting, with a
 // gentle emissive lift to keep colours vivid) plus a dark-walnut frame made of a
 // thin backing and four raised bars.
-function framedPiece(tex, artW, artH, fw = 0.07, fd = 0.05) {
+export function framedPiece(tex, artW, artH, fw = 0.07, fd = 0.05) {
   const group = new THREE.Group();
   const artMat = new THREE.MeshStandardMaterial({
     map: tex,
