@@ -63,6 +63,7 @@ function onLoaded(root) {
     }
     o.castShadow = false;
     o.receiveShadow = false;
+    const isFloor = (o.name || '').toLowerCase().startsWith('floor');
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     mats.forEach((m) => {
       if (!m) return;
@@ -72,6 +73,11 @@ function onLoaded(root) {
         m.emissive.setRGB(0, 0, 0);
         m.emissiveIntensity = 0;
         if (m.emissiveMap) m.emissiveMap = null;
+        m.needsUpdate = true;
+      }
+      // Tint the flat-white floor a warm wood tone.
+      if (isFloor && CONFIG.FLOOR_COLOR != null && m.color) {
+        m.color.setHex(CONFIG.FLOOR_COLOR);
         m.needsUpdate = true;
       }
     });

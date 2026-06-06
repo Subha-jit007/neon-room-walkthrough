@@ -17,6 +17,10 @@ export const CONFIG = {
   // hide objects, e.g. ['Bed', 'Mattress'] to remove the bed.
   HIDE_OBJECTS: [],
 
+  // The floor's 'Floor_Wood' material ships as flat white. Tint it a warm
+  // wood brown so it reads as a wooden floor. Set to null to leave untinted.
+  FLOOR_COLOR: 0x6b4f3a,
+
   RUN_MULT: 1.9, // walk-speed multiplier while running
   LOOK_DRAG: 0.0042, // mouse drag look sensitivity
   LOOK_TOUCH: 0.005, // touch drag look sensitivity
