@@ -13,9 +13,9 @@ export const CONFIG = {
   SPAWN: { x: 0, z: 3.0, yaw: 0 }, // start near the door, looking into the room
 
   // Object-name prefixes (case-insensitive) to strip from the model on load.
-  // 'Rug' = the pink mat in the middle of the floor (Rug_Main + parts).
-  // 'Bed'/'Mattress'/'Headboard'/'Neon_Bed' = the big bed beyond the rug.
-  HIDE_OBJECTS: ['Rug', 'Bed', 'Mattress', 'Headboard', 'Neon_Bed'],
+  // Empty => nothing removed; the full room is shown. Add prefixes here to
+  // hide objects, e.g. ['Bed', 'Mattress'] to remove the bed.
+  HIDE_OBJECTS: [],
 
   // The floor's 'Floor_Wood' material ships as flat white. Tint it a warm
   // wood brown so it reads as a wooden floor. Set to null to leave untinted.
