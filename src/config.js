@@ -22,6 +22,10 @@ export const CONFIG = {
   // wood brown so it reads as a wooden floor. Set to null to leave untinted.
   FLOOR_COLOR: 0x6b4f3a,
 
+  // Image mapped onto the ceiling as a self-lit "sky" — look up to see it.
+  // Lives in /public. Set to null to keep the original ceiling.
+  CEILING_IMAGE: `${import.meta.env.BASE_URL}galaxy.jpg`,
+
   RUN_MULT: 1.9, // walk-speed multiplier while running
   LOOK_DRAG: 0.0042, // mouse drag look sensitivity
   LOOK_TOUCH: 0.005, // touch drag look sensitivity

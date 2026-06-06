@@ -51,6 +51,19 @@ export function loadModel(url, isBlob = false) {
 const hidePrefixes = CONFIG.HIDE_OBJECTS.map((p) => p.toLowerCase());
 const shouldHide = (name) => hidePrefixes.some((p) => (name || '').toLowerCase().startsWith(p));
 
+// Lazily-loaded galaxy texture for the ceiling "sky".
+const textureLoader = new THREE.TextureLoader();
+let ceilingTexture = null;
+function getCeilingTexture() {
+  if (!CONFIG.CEILING_IMAGE) return null;
+  if (!ceilingTexture) {
+    ceilingTexture = textureLoader.load(CONFIG.CEILING_IMAGE);
+    ceilingTexture.colorSpace = THREE.SRGBColorSpace;
+    ceilingTexture.flipY = false; // match glTF UV origin (top-left)
+  }
+  return ceilingTexture;
+}
+
 function onLoaded(root) {
   // Make the shell solid from the inside, strip emissive glow, and collect
   // any unwanted objects (e.g. the floor rug) to remove afterwards.
@@ -63,6 +76,17 @@ function onLoaded(root) {
     }
     o.castShadow = false;
     o.receiveShadow = false;
+
+    // Ceiling: replace with an unlit galaxy "sky" so it glows like a real sky.
+    if ((o.name || '').toLowerCase().startsWith('ceiling')) {
+      const tex = getCeilingTexture();
+      if (tex) {
+        (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m?.dispose?.());
+        o.material = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide });
+        return;
+      }
+    }
+
     const isFloor = (o.name || '').toLowerCase().startsWith('floor');
     const mats = Array.isArray(o.material) ? o.material : [o.material];
     mats.forEach((m) => {
