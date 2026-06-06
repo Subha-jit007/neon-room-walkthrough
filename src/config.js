@@ -12,6 +12,11 @@ export const CONFIG = {
 
   SPAWN: { x: 0, z: 3.0, yaw: 0 }, // start near the door, looking into the room
 
+  // Object-name prefixes (case-insensitive) to strip from the model on load.
+  // "Rug" removes the rug that sits in the middle of the floor and all its
+  // parts (Rug_Main, Rug_Border, Rug_Inner, Rug_LineX_*, Rug_LineY_*).
+  HIDE_OBJECTS: ['Rug'],
+
   RUN_MULT: 1.9, // walk-speed multiplier while running
   LOOK_DRAG: 0.0042, // mouse drag look sensitivity
   LOOK_TOUCH: 0.005, // touch drag look sensitivity

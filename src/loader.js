@@ -48,10 +48,19 @@ export function loadModel(url, isBlob = false) {
   );
 }
 
+const hidePrefixes = CONFIG.HIDE_OBJECTS.map((p) => p.toLowerCase());
+const shouldHide = (name) => hidePrefixes.some((p) => (name || '').toLowerCase().startsWith(p));
+
 function onLoaded(root) {
-  // Make the shell solid from the inside and strip any emissive glow.
+  // Make the shell solid from the inside, strip emissive glow, and collect
+  // any unwanted objects (e.g. the floor rug) to remove afterwards.
+  const removeList = [];
   root.traverse((o) => {
     if (!o.isMesh) return;
+    if (shouldHide(o.name)) {
+      removeList.push(o);
+      return;
+    }
     o.castShadow = false;
     o.receiveShadow = false;
     const mats = Array.isArray(o.material) ? o.material : [o.material];
@@ -67,6 +76,15 @@ function onLoaded(root) {
       }
     });
   });
+
+  // Remove collected objects after traversal (don't mutate the tree mid-walk).
+  removeList.forEach((o) => {
+    o.removeFromParent();
+    o.geometry?.dispose?.();
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    mats.forEach((m) => m?.dispose?.());
+  });
+
   scene.add(root);
 
   // Derive interior movement bounds from the model's bounding box.
