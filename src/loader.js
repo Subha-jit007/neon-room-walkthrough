@@ -7,7 +7,7 @@ import { applyLook } from './controls.js';
 import { createGalaxyMaterial } from './skyMaterial.js';
 import { createChessFloorMaterial } from './floorMaterial.js';
 import { createScreenMaterial } from './screenVideo.js';
-import { createWallArt } from './wallArt.js';
+import { createWallArt, createFlowerPaintings } from './wallArt.js';
 
 const loader = new GLTFLoader();
 
@@ -113,8 +113,10 @@ function onLoaded(root) {
 
   scene.add(root);
 
-  // Hang a Japanese ukiyo-e print on the otherwise-bare right wall (X = +4).
+  // Hang a Japanese ukiyo-e print on the otherwise-bare right wall (X = +4),
+  // flanked by two smaller Japanese flower paintings (peony + iris).
   scene.add(createWallArt());
+  scene.add(createFlowerPaintings());
 
   // Derive interior movement bounds from the model's bounding box.
   const box = new THREE.Box3().setFromObject(root);
