@@ -16,15 +16,15 @@ function imageTexture(file) {
 
 export function createWallPosters() {
   const grp = new THREE.Group();
-  // [file, aspect (w/h), height, y (centre), z]
+  // [file, aspect (w/h), height, y (centre), z, frameWidth]
   // Around Spider-Man (Z=-0.8, hung high) the rhythm reads: low, [high], low, high.
   const pieces = [
-    ['tony-stark.jpg', 736 / 1308, 1.4, 1.55, -2.3], // tall, hung low
-    ['born-to-die.jpg', 736 / 1308, 1.4, 1.55, 0.75], // tall, hung low
-    ['stay-trippy.jpg', 669 / 981, 0.98, 2.05, 2.15], // smaller, hung high
+    ['tony-stark.jpg', 736 / 1308, 1.4, 1.55, -2.3, 0.025], // tall, hung low, thin frame
+    ['born-to-die.jpg', 736 / 1308, 1.4, 1.55, 0.75, 0.07], // tall, hung low
+    ['stay-trippy.jpg', 669 / 981, 0.98, 2.05, 2.15, 0.07], // smaller, hung high
   ];
-  for (const [file, ar, h, y, z] of pieces) {
-    const p = framedPiece(imageTexture(file), h * ar, h);
+  for (const [file, ar, h, y, z, fw] of pieces) {
+    const p = framedPiece(imageTexture(file), h * ar, h, fw);
     p.rotation.y = Math.PI / 2; // local +Z -> world +X (faces the room)
     p.position.set(-3.88, y, z);
     grp.add(p);
