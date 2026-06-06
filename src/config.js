@@ -23,6 +23,10 @@ export const CONFIG = {
   // square colours.
   FLOOR_CHESS: { size: 1.0, light: 0xd5d8de, dark: 0x14161d },
 
+  // Video played (with audio) on the monitor's Anime_Screen. Lives in /public.
+  // Set to null to leave the screen as-is.
+  SCREEN_VIDEO: `${import.meta.env.BASE_URL}screen.mp4`,
+
   RUN_MULT: 1.9, // walk-speed multiplier while running
   LOOK_DRAG: 0.0042, // mouse drag look sensitivity
   LOOK_TOUCH: 0.005, // touch drag look sensitivity

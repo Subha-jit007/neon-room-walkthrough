@@ -6,6 +6,7 @@ import { scene, camera } from './scene.js';
 import { applyLook } from './controls.js';
 import { createGalaxyMaterial } from './skyMaterial.js';
 import { createChessFloorMaterial } from './floorMaterial.js';
+import { createScreenMaterial } from './screenVideo.js';
 
 const loader = new GLTFLoader();
 
@@ -77,6 +78,13 @@ function onLoaded(root) {
     if ((o.name || '').toLowerCase().startsWith('floor')) {
       (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m?.dispose?.());
       o.material = createChessFloorMaterial();
+      return;
+    }
+
+    // Monitor: play the video (with audio) on the screen.
+    if (CONFIG.SCREEN_VIDEO && (o.name || '').toLowerCase() === 'anime_screen') {
+      (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m?.dispose?.());
+      o.material = createScreenMaterial();
       return;
     }
 
