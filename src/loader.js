@@ -10,6 +10,7 @@ import { createScreenMaterial } from './screenVideo.js';
 import { createWallArt, createFlowerPaintings } from './wallArt.js';
 import { createWallPosters } from './wallPosters.js';
 import { createSwordDisplay } from './swords.js';
+import { initPhysics } from './physics.js';
 
 const loader = new GLTFLoader();
 
@@ -145,4 +146,8 @@ function onLoaded(root) {
   dropEl.classList.remove('show');
   hideLoading();
   state.started = true;
+
+  // Bring the room to life with Rapier physics (async WASM init). Built last so
+  // the movement bounds above are derived from the full, un-reparented model.
+  initPhysics(root);
 }

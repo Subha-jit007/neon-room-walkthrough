@@ -6,6 +6,7 @@ import { initControls, updateMovement } from './controls.js';
 import { initUI } from './ui.js';
 import { loadModel } from './loader.js';
 import { updateGalaxy } from './skyMaterial.js';
+import { updatePhysics } from './physics.js';
 
 // Wire everything together.
 attachRenderer(document.getElementById('app'));
@@ -20,6 +21,7 @@ function animate() {
   const dt = Math.min(clock.getDelta(), 0.05); // cap dt to avoid jumps after tab-switch
   elapsed += dt;
   updateMovement(dt);
+  updatePhysics(dt); // step Rapier; props react to the player and gravity
   updateGalaxy(elapsed); // animate the ceiling nebula (drift + twinkle)
   render();
 }
