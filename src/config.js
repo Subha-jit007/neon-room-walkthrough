@@ -15,8 +15,9 @@ export const CONFIG = {
   // Object-name prefixes (case-insensitive) to strip from the model on load.
   // P1_/P2_/P3_ are stray 2x2x2 boxes stacked at the room center (origin).
   // 'Rug' is the large pink/crimson floor mat (Rug_Main + its parts).
+  // 'Plant_Neon' is the stray magenta neon ring at the plant base.
   // None of these are the wall posters (Poster1/2/3_*), which stay intact.
-  HIDE_OBJECTS: ['P1_', 'P2_', 'P3_', 'Rug'],
+  HIDE_OBJECTS: ['P1_', 'P2_', 'P3_', 'Rug', 'Plant_Neon'],
 
   // The floor is rendered as a lit chessboard. `size` is the square edge in
   // metres (8x8 m floor with size 1 => an 8x8 board); light/dark are the
