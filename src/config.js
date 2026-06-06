@@ -13,9 +13,9 @@ export const CONFIG = {
   SPAWN: { x: 0, z: 3.0, yaw: 0 }, // start near the door, looking into the room
 
   // Object-name prefixes (case-insensitive) to strip from the model on load.
-  // Removes the bed (the big box): base, mattress, duvet, pillows, cushions,
-  // throws, headboard, and the neon strip behind it. (Rug restored.)
-  HIDE_OBJECTS: ['Bed', 'Mattress', 'Headboard', 'Neon_Bed'],
+  // Empty => nothing removed; the full room is shown. Add prefixes here to
+  // hide objects, e.g. ['Bed', 'Mattress'] to remove the bed.
+  HIDE_OBJECTS: [],
 
   RUN_MULT: 1.9, // walk-speed multiplier while running
   LOOK_DRAG: 0.0042, // mouse drag look sensitivity
