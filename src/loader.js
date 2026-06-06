@@ -1,0 +1,87 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { CONFIG, clamp } from './config.js';
+import { state } from './state.js';
+import { scene, camera } from './scene.js';
+import { applyLook } from './controls.js';
+
+const loader = new GLTFLoader();
+
+const statusEl = document.getElementById('status');
+const loadingEl = document.getElementById('loading');
+const dropEl = document.getElementById('drop');
+
+function setStatus(text) {
+  statusEl.textContent = text;
+}
+
+function hideLoading() {
+  loadingEl.style.opacity = '0';
+  setTimeout(() => {
+    loadingEl.style.display = 'none';
+  }, 650);
+}
+
+function showDrop() {
+  hideLoading();
+  dropEl.classList.add('show');
+}
+
+/**
+ * Load a GLB/GLTF model into the scene.
+ * @param {string} url      model URL (or object URL for a dropped file)
+ * @param {boolean} isBlob  true when loading a user-supplied file
+ */
+export function loadModel(url, isBlob = false) {
+  setStatus('Loading room…');
+  loader.load(
+    url,
+    (gltf) => onLoaded(gltf.scene),
+    (e) => {
+      if (e.total) setStatus(`Loading room… ${Math.round((e.loaded / e.total) * 100)}%`);
+    },
+    (err) => {
+      console.warn('GLB load failed:', err);
+      if (!isBlob) showDrop();
+      else setStatus('Could not read that file.');
+    },
+  );
+}
+
+function onLoaded(root) {
+  // Make the shell solid from the inside and let the neon bloom.
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    o.castShadow = false;
+    o.receiveShadow = false;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    mats.forEach((m) => {
+      if (!m) return;
+      m.side = THREE.DoubleSide; // no see-through walls
+      if (m.emissive) {
+        const e = m.emissive.r + m.emissive.g + m.emissive.b;
+        if (e > 0.01) m.emissiveIntensity = (m.emissiveIntensity || 1) * 1.5; // punch up neon for bloom
+      }
+    });
+  });
+  scene.add(root);
+
+  // Derive interior movement bounds from the model's bounding box.
+  const box = new THREE.Box3().setFromObject(root);
+  state.bounds.minX = box.min.x + CONFIG.WALL_MARGIN;
+  state.bounds.maxX = box.max.x - CONFIG.WALL_MARGIN;
+  state.bounds.minZ = box.min.z + CONFIG.WALL_MARGIN;
+  state.bounds.maxZ = box.max.z - CONFIG.WALL_MARGIN;
+
+  // Spawn safely inside the room.
+  camera.position.x = clamp(CONFIG.SPAWN.x, state.bounds.minX, state.bounds.maxX);
+  camera.position.z = clamp(CONFIG.SPAWN.z, state.bounds.minZ, state.bounds.maxZ);
+  camera.position.y = CONFIG.FLOOR_Y + CONFIG.EYE_HEIGHT;
+  state.yaw = CONFIG.SPAWN.yaw;
+  state.pitch = 0;
+  applyLook();
+
+  dropEl.classList.remove('show');
+  hideLoading();
+  state.started = true;
+}

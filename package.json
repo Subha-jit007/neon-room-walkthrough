@@ -1,0 +1,18 @@
+{
+  "name": "neon-room-walkthrough",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "First-person Three.js walkthrough of a neon-lit Blender room.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.161.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

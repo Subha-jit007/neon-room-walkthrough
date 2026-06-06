@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Neon Room — Walkthrough</title>
+  <meta name="description" content="First-person Three.js walkthrough of a neon-lit Blender room." />
+  <meta name="theme-color" content="#04060b" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- loading -->
+  <div id="loading">
+    <div class="ring"></div>
+    <div class="brandmark">NEON<b>·</b>ROOM</div>
+    <div id="status">Initialising…</div>
+  </div>
+
+  <!-- dropzone fallback (shown only if the bundled GLB fails to load) -->
+  <div id="drop">
+    <label class="dz-card" id="dzcard">
+      <h2>Load the room model</h2>
+      <p>Couldn't load <code>NeonRoom.glb</code>.<br />
+         Drop your <code>.glb</code> here, or click to choose it.</p>
+      <span class="pick">Choose .glb file</span>
+      <input id="file" type="file" accept=".glb,.gltf,model/gltf-binary" hidden />
+    </label>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="topbar">
+      <div class="title">NEON ROOM <b>//</b> WALKTHROUGH<small>interior explorer</small></div>
+      <div class="tools">
+        <div class="tool" id="gear" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.2" /><path d="M19.4 13a7.8 7.8 0 0 0 .1-2l2-1.5-2-3.4-2.3 1a7.6 7.6 0 0 0-1.7-1l-.3-2.5H10l-.3 2.5a7.6 7.6 0 0 0-1.7 1l-2.3-1-2 3.4L3.5 11a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7.6 7.6 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7.6 7.6 0 0 0 1.7-1l2.3 1 2-3.4z" /></svg>
+        </div>
+        <div class="tool" id="fs" title="Fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+        </div>
+      </div>
+    </div>
+
+    <div id="settings">
+      <h3>Display</h3>
+      <div class="row"><label>Exposure <span id="vExp">1.05</span></label><input id="exp" type="range" min="0.4" max="2.2" step="0.01" value="1.05" /></div>
+      <div class="row"><label>Neon glow <span id="vBloom">0.60</span></label><input id="bloom" type="range" min="0" max="1.6" step="0.01" value="0.60" /></div>
+      <div class="row"><label>Walk speed <span id="vSpeed">2.8</span></label><input id="speed" type="range" min="1" max="6" step="0.1" value="2.8" /></div>
+      <button class="reset" id="reset">Reset view</button>
+    </div>
+
+    <div class="reticle"></div>
+    <div class="hint">Drag to <b>look</b> · <b>W A S D</b> / arrows to move · <b>Shift</b> run</div>
+
+    <div id="pad">
+      <div class="pbtn up"    data-dir="f"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5l7 9H5z" /></svg></div>
+      <div class="pbtn left"  data-dir="l"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 12l9-7v14z" /></svg></div>
+      <div class="pbtn run"   data-dir="run">RUN</div>
+      <div class="pbtn right" data-dir="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 12l-9 7V5z" /></svg></div>
+      <div class="pbtn down"  data-dir="b"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 19l-7-9h14z" /></svg></div>
+    </div>
+    <div class="lookpad">DRAG<br />TO LOOK</div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
