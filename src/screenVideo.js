@@ -41,19 +41,33 @@ export function createScreenMaterial() {
   // Kick off muted playback immediately (allowed without a gesture).
   video.play().catch(() => {});
 
-  // First user gesture: make sure it's playing and turn the sound on.
-  const enableSound = () => {
-    video.muted = false;
-    video.play().catch(() => {
-      // If unmuted playback is still refused, stay muted but keep playing.
-      video.muted = true;
-      video.play().catch(() => {});
-    });
+  // Turn the sound on at the first user gesture. The `muted` content attribute
+  // (needed for mobile autoplay) keeps some browsers muted even after setting
+  // .muted = false, so we remove it here and retry on each gesture until it
+  // sticks.
+  let soundOn = false;
+  const detach = () => {
     window.removeEventListener('pointerdown', enableSound);
     window.removeEventListener('touchstart', enableSound);
     window.removeEventListener('click', enableSound);
     window.removeEventListener('keydown', enableSound);
   };
+  function enableSound() {
+    if (soundOn) return;
+    video.removeAttribute('muted');
+    video.muted = false;
+    video.volume = 1.0;
+    Promise.resolve(video.play())
+      .then(() => {
+        if (!video.muted) {
+          soundOn = true;
+          detach();
+        }
+      })
+      .catch(() => {
+        /* keep listening; the next gesture will retry */
+      });
+  }
   window.addEventListener('pointerdown', enableSound, { passive: true });
   window.addEventListener('touchstart', enableSound, { passive: true });
   window.addEventListener('click', enableSound, { passive: true });
