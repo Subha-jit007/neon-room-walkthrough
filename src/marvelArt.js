@@ -114,8 +114,12 @@ function bolt(g, x0, y0, x1, y1, color, rng) {
 }
 
 function heroName(g, W, H, text, fill, stroke) {
-  const size = Math.min(W * 0.15, (W * 1.7) / Math.max(text.length, 5));
   g.save();
+  let size = W * 0.15;
+  const maxW = W * 0.82;
+  g.font = `900 ${size}px "Arial Black", Impact, sans-serif`;
+  const measured = g.measureText(text).width;
+  if (measured > maxW) size *= maxW / measured; // shrink long names to fit
   g.font = `900 ${size}px "Arial Black", Impact, sans-serif`;
   g.textAlign = 'center';
   g.textBaseline = 'middle';
@@ -373,6 +377,46 @@ function avengersLogo(g, cx, cy, R, col) {
   g.restore();
 }
 
+// Black Widow emblem: the red widow "hourglass" marking with radiating spider
+// legs, inside a ring.
+function blackWidow(g, cx, cy, R, col) {
+  g.save();
+  g.translate(cx, cy);
+  // ring
+  g.lineWidth = R * 0.08;
+  g.strokeStyle = col;
+  g.beginPath();
+  g.arc(0, 0, R, 0, TAU);
+  g.stroke();
+  // spider legs (4 per side)
+  g.lineCap = 'round';
+  for (const side of [-1, 1]) {
+    for (let i = 0; i < 4; i++) {
+      const y0 = -R * 0.32 + (i / 3) * R * 0.64;
+      g.lineWidth = R * 0.05;
+      g.beginPath();
+      g.moveTo(0, y0 * 0.5);
+      g.quadraticCurveTo(side * R * 0.75, y0 - R * 0.12, side * R * 1.02, y0 + (i < 2 ? -R * 0.22 : R * 0.28));
+      g.stroke();
+    }
+  }
+  // hourglass body (the widow marking)
+  g.fillStyle = col;
+  g.beginPath();
+  g.moveTo(-R * 0.32, -R * 0.6);
+  g.lineTo(R * 0.32, -R * 0.6);
+  g.lineTo(0, 0);
+  g.closePath();
+  g.fill();
+  g.beginPath();
+  g.moveTo(-R * 0.32, R * 0.6);
+  g.lineTo(R * 0.32, R * 0.6);
+  g.lineTo(0, 0);
+  g.closePath();
+  g.fill();
+  g.restore();
+}
+
 /* ---------- per-poster compositions ---------- */
 
 function makeMarvelTexture(kind) {
@@ -382,7 +426,7 @@ function makeMarvelTexture(kind) {
   cv.width = W;
   cv.height = H;
   const g = cv.getContext('2d');
-  const seeds = { cap: 0xca9, ironman: 0x1404, thor: 0x7405, avengers: 0xa7e5 };
+  const seeds = { cap: 0xca9, ironman: 0x1404, thor: 0x7405, avengers: 0xa7e5, natasha: 0x2a7a };
   const rng = mulberry32(seeds[kind] || 1);
   const cx = W / 2;
   const cy = H * 0.43;
@@ -415,6 +459,14 @@ function makeMarvelTexture(kind) {
     cornerBurst(g, W * 0.81, H * 0.16, 'BOOM!', '#ffe14d');
     heroName(g, W, H, 'THOR', '#ffe14d', '#0a0a0a');
     comicBorder(g, W, H, '#9fb6e0');
+  } else if (kind === 'natasha') {
+    comicBg(g, W, H, '#9a1525', '#120203', '#2a0408', rng);
+    speedLines(g, cx, cy, H * 0.7, 64, '#ffffff', rng);
+    starburst(g, cx, cy, W * 0.45, W * 0.33, 16, '#1a1a1a', '#e23b3b');
+    blackWidow(g, cx, cy, W * 0.3, '#e8203a');
+    cornerBurst(g, W * 0.81, H * 0.16, 'STING!', '#e8203a');
+    heroName(g, W, H, 'NATASHA', '#e8203a', '#0a0a0a');
+    comicBorder(g, W, H, '#e8203a');
   } else {
     comicBg(g, W, H, '#c01515', '#1a0303', '#3a0808', rng);
     speedLines(g, cx, cy, H * 0.7, 64, '#ffd21f', rng);
@@ -433,23 +485,23 @@ function makeMarvelTexture(kind) {
 
 /* ---------- mounted gallery on the left wall ---------- */
 
-// Hung on the left wall (inner face ~X=-3.9, facing +X into the room), spread
-// along the wall around the existing Spider-Man poster (which sits at Z=-0.8).
+// Hung on the left wall (inner face ~X=-3.9, facing +X into the room) around the
+// untouched Spider-Man poster (Z=-0.8, big/high). The new pieces alternate
+// small+low / big+high so the whole wall reads as a zig-zag rhythm:
+//   Iron Man (small, low) — [Spider-Man] — Natasha (small, low) — Cap (big, high)
 export function createMarvelPaintings() {
   const grp = new THREE.Group();
-  const w = 0.95;
-  const h = 1.15;
-  const Y = 2.0; // line up with the Spider-Man poster's height
+  const BIG = { w: 1.02, h: 1.22, y: 2.0 }; // high
+  const SMALL = { w: 0.82, h: 0.98, y: 1.5 }; // low
   const pieces = [
-    ['avengers', -2.6],
-    ['cap', 0.55],
-    ['ironman', 1.8],
-    ['thor', 3.05],
+    ['ironman', -2.4, SMALL],
+    ['natasha', 0.7, SMALL],
+    ['cap', 2.2, BIG],
   ];
-  for (const [kind, z] of pieces) {
-    const p = framedPiece(makeMarvelTexture(kind), w, h);
+  for (const [kind, z, s] of pieces) {
+    const p = framedPiece(makeMarvelTexture(kind), s.w, s.h);
     p.rotation.y = Math.PI / 2; // local +Z -> world +X (faces the room)
-    p.position.set(-3.88, Y, z);
+    p.position.set(-3.88, s.y, z);
     grp.add(p);
   }
   return grp;

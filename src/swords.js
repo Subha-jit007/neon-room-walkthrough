@@ -295,6 +295,44 @@ function buildSword({ bladeLen, bladeW, sori, handleLen, hh, dh }, bladeTex, ito
   return g;
 }
 
+// A 3D Captain America shield: stacked concentric disks (red/white/red/blue)
+// stepping toward the viewer, topped with a raised white star. Built facing -Z.
+function buildCapShield(R) {
+  const g = new THREE.Group();
+  const metal = (c, emi = 0.12) =>
+    new THREE.MeshStandardMaterial({ color: c, metalness: 0.35, roughness: 0.4, emissive: c, emissiveIntensity: emi });
+  const disk = (r, c, z) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.012, 48), metal(c));
+    m.rotation.x = Math.PI / 2; // axis -> Z, faces toward the room
+    m.position.z = z;
+    g.add(m);
+  };
+  disk(R, 0xb5202b, 0); // outer red
+  disk(R * 0.8, 0xe8e8e8, -0.012); // white
+  disk(R * 0.62, 0xb5202b, -0.024); // red
+  disk(R * 0.44, 0x1a3fa0, -0.036); // blue centre
+
+  // raised white star
+  const s = new THREE.Shape();
+  const ro = R * 0.4;
+  const ri = R * 0.16;
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 ? ri : ro;
+    const a = -Math.PI / 2 + (i / 10) * Math.PI * 2;
+    const x = Math.cos(a) * r;
+    const y = Math.sin(a) * r;
+    i ? s.lineTo(x, y) : s.moveTo(x, y);
+  }
+  s.closePath();
+  const star = new THREE.Mesh(
+    new THREE.ExtrudeGeometry(s, { depth: 0.01, bevelEnabled: false }),
+    new THREE.MeshStandardMaterial({ color: 0xf2f2f2, metalness: 0.3, roughness: 0.4, emissive: 0x444444, emissiveIntensity: 0.25 }),
+  );
+  star.position.z = -0.05;
+  g.add(star);
+  return g;
+}
+
 /* ---------- the rack + assembled display ---------- */
 
 export function createSwordDisplay() {
@@ -342,6 +380,11 @@ export function createSwordDisplay() {
   );
   wakizashi.position.add(new THREE.Vector3(0, -0.07, -0.105));
   display.add(wakizashi);
+
+  // Captain America shield mounted above the swords
+  const shield = buildCapShield(0.3);
+  shield.position.set(0, 0.6, -0.05);
+  display.add(shield);
 
   // hang on the door/front wall (inner face ~Z=3.88), right of the doorway.
   // No rotation needed: swords run along world X, broad faces toward the room.
