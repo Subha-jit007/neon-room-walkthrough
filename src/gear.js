@@ -143,10 +143,10 @@ function buildMousepad() {
   };
   const g = new THREE.Group();
   // stitched edge band peeking out beneath the surface
-  const edge = slab(w + 0.012, d + 0.012, t * 0.6, matte(0x2a2a30, 0.85, 0.0));
+  const edge = slab(w + 0.012, d + 0.012, t * 0.6, matte(0xc8c8cc, 0.85, 0.0));
   g.add(edge);
-  // cloth surface
-  const surface = slab(w, d, t, matte(0x111114, 0.95, 0.0));
+  // white cloth surface
+  const surface = slab(w, d, t, matte(0xf2f2f0, 0.95, 0.0));
   surface.position.y = 0.001;
   g.add(surface);
   return g;
@@ -284,7 +284,8 @@ export function createDeskGear() {
   g.add(ring);
 
   const bottle = buildBottle();
-  bottle.position.set(2.82, Y, -2.4);
+  bottle.scale.setScalar(1.5);
+  bottle.position.set(2.95, Y, -2.45);
   g.add(bottle);
 
   // headset hung on the back wall, just right of the monitor, near the screen
