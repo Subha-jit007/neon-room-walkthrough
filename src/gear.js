@@ -74,6 +74,14 @@ function buildKeyboard() {
     g.add(cap(wm, x + (w * pitch) / 2, zb, (0.85 - (i / widths.length) * 0.62 + 1) % 1));
     x += w * pitch;
   });
+
+  // raised front bezel lip with a small brand bar
+  const lip = new THREE.Mesh(new THREE.BoxGeometry(W, 0.006, 0.01), matte(0x080809, 0.45, 0.4));
+  lip.position.set(0, H + 0.002, D / 2 - 0.008);
+  g.add(lip);
+  const brand = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.004, 0.004), matte(0x9a9aa0, 0.4, 0.6));
+  brand.position.set(0, H + 0.006, D / 2 - 0.008);
+  g.add(brand);
   return g;
 }
 
@@ -95,10 +103,52 @@ function buildMouse() {
   wheel.rotation.z = Math.PI / 2;
   wheel.position.set(0, 0.034, -0.028);
   g.add(wheel);
+  // button-split groove down the top
+  const split = new THREE.Mesh(new THREE.BoxGeometry(0.0015, 0.006, 0.05), matte(0x050505, 0.5));
+  split.position.set(0, 0.035, 0.005);
+  g.add(split);
   // logo ring on top
   const logo = new THREE.Mesh(new THREE.TorusGeometry(0.008, 0.0015, 8, 20), matte(0x3a3a3a, 0.5, 0.4));
-  logo.position.set(0, 0.038, 0.012);
+  logo.position.set(0, 0.038, 0.014);
   g.add(logo);
+  return g;
+}
+
+/* ---------- mousepad ---------- */
+
+function buildMousepad() {
+  const w = 0.3;
+  const d = 0.24;
+  const r = 0.03;
+  const t = 0.005;
+  const rounded = (ww, dd) => {
+    const s = new THREE.Shape();
+    const x0 = -ww / 2;
+    const y0 = -dd / 2;
+    s.moveTo(x0 + r, y0);
+    s.lineTo(x0 + ww - r, y0);
+    s.quadraticCurveTo(x0 + ww, y0, x0 + ww, y0 + r);
+    s.lineTo(x0 + ww, y0 + dd - r);
+    s.quadraticCurveTo(x0 + ww, y0 + dd, x0 + ww - r, y0 + dd);
+    s.lineTo(x0 + r, y0 + dd);
+    s.quadraticCurveTo(x0, y0 + dd, x0, y0 + dd - r);
+    s.lineTo(x0, y0 + r);
+    s.quadraticCurveTo(x0, y0, x0 + r, y0);
+    return s;
+  };
+  const slab = (ww, dd, h, mat) => {
+    const geo = new THREE.ExtrudeGeometry(rounded(ww, dd), { depth: h, bevelEnabled: false });
+    geo.rotateX(-Math.PI / 2); // lay flat: thickness along +Y
+    return new THREE.Mesh(geo, mat);
+  };
+  const g = new THREE.Group();
+  // stitched edge band peeking out beneath the surface
+  const edge = slab(w + 0.012, d + 0.012, t * 0.6, matte(0x2a2a30, 0.85, 0.0));
+  g.add(edge);
+  // cloth surface
+  const surface = slab(w, d, t, matte(0x111114, 0.95, 0.0));
+  surface.position.y = 0.001;
+  g.add(surface);
   return g;
 }
 
@@ -213,12 +263,20 @@ export function createDeskGear() {
   const g = new THREE.Group();
   const Y = 0.84; // desk top surface
 
+  // Keyboard + mouse: larger, and pulled forward to the desk edge so they're
+  // reachable from the chair (rather than jammed against the screen).
   const kb = buildKeyboard();
-  kb.position.set(1.95, Y, -2.95);
+  kb.scale.setScalar(1.3);
+  kb.position.set(1.9, Y, -2.55);
   g.add(kb);
 
+  const pad = buildMousepad();
+  pad.position.set(2.6, Y, -2.5);
+  g.add(pad);
+
   const mouse = buildMouse();
-  mouse.position.set(2.55, Y, -2.98);
+  mouse.scale.setScalar(1.35);
+  mouse.position.set(2.6, Y + 0.006, -2.5);
   g.add(mouse);
 
   const ring = buildRingLight();

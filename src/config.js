@@ -22,7 +22,7 @@ export const CONFIG = {
   // Exact object names to strip (no prefix matching). The basic model keyboard
   // and mouse are replaced by detailed versions in gear.js; using a prefix here
   // would also hide 'Mousepad', which we keep.
-  HIDE_EXACT: ['Keyboard', 'Mouse'],
+  HIDE_EXACT: ['Keyboard', 'Mouse', 'Mousepad'],
 
   // The floor is rendered as a lit chessboard. `size` is the square edge in
   // metres (8x8 m floor with size 1 => an 8x8 board); light/dark are the
