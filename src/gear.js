@@ -158,36 +158,45 @@ function buildRingLight() {
   const g = new THREE.Group();
   const blk = matte(0x121212, 0.5, 0.3);
 
-  const ringMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: 0xfff3df,
-    emissiveIntensity: 0.95,
-    roughness: 0.4,
-  });
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.016, 16, 48), ringMat);
-  ring.position.y = 0.3;
-  g.add(ring);
-
-  const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.05, 0.018), matte(0xf2f2f2, 0.5));
-  bracket.position.set(0, 0.17, 0);
-  g.add(bracket);
-  const ball = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 12), blk);
-  ball.position.y = 0.14;
-  g.add(ball);
-  const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.022, 8), blk);
-  knob.rotation.z = Math.PI / 2;
-  knob.position.set(0.022, 0.14, 0);
-  g.add(knob);
-  const col = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.014, 0.1, 12), blk);
-  col.position.y = 0.085;
-  g.add(col);
-
-  // three splayed tripod legs
-  const top = new THREE.Vector3(0, 0.06, 0);
+  // upright tripod + column
+  const top = new THREE.Vector3(0, 0.08, 0);
   for (let i = 0; i < 3; i++) {
     const a = (i / 3) * Math.PI * 2;
-    g.add(strut(top, new THREE.Vector3(Math.cos(a) * 0.09, 0, Math.sin(a) * 0.09), 0.005, blk));
+    g.add(strut(top, new THREE.Vector3(Math.cos(a) * 0.13, 0, Math.sin(a) * 0.13), 0.006, blk));
   }
+  const col = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.016, 0.12, 12), blk);
+  col.position.y = 0.1;
+  g.add(col);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(0.022, 16, 12), blk);
+  ball.position.y = 0.18;
+  g.add(ball);
+  const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.03, 8), blk);
+  knob.rotation.z = Math.PI / 2;
+  knob.position.set(0.026, 0.18, 0);
+  g.add(knob);
+
+  // tilting head (large ring) aimed toward the chair / seated user
+  const head = new THREE.Group();
+  head.position.y = 0.18;
+  const R = 0.17;
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(R, 0.022, 18, 56),
+    new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff3df, emissiveIntensity: 0.95, roughness: 0.4 }),
+  );
+  ring.position.y = R + 0.04;
+  head.add(ring);
+  // brighter LED face on the front
+  const led = new THREE.Mesh(
+    new THREE.TorusGeometry(R, 0.012, 16, 56),
+    new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.15, roughness: 0.3 }),
+  );
+  led.position.set(0, R + 0.04, 0.012);
+  head.add(led);
+  const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.024, 0.06, 0.02), matte(0xf0f0f0, 0.5));
+  bracket.position.y = 0.03;
+  head.add(bracket);
+  head.rotation.x = -0.42; // bend toward the chair
+  g.add(head);
   return g;
 }
 
@@ -235,23 +244,34 @@ function buildBottle() {
 
 function buildHeadset() {
   const g = new THREE.Group();
-  const blk = matte(0x141414, 0.6, 0.2);
-  const cushion = matte(0x090909, 0.45, 0.1);
-  const R = 0.085;
+  const blk = matte(0x141414, 0.55, 0.25);
+  const soft = matte(0x0a0a0a, 0.45, 0.1);
+  const accent = matte(0x26262b, 0.5, 0.45);
+  const R = 0.11;
 
-  // headband arch (upper half torus)
-  const band = new THREE.Mesh(new THREE.TorusGeometry(R, 0.014, 12, 32, Math.PI), blk);
+  // headband: thick outer arch + soft inner padding
+  const band = new THREE.Mesh(new THREE.TorusGeometry(R, 0.018, 16, 44, Math.PI), blk);
   g.add(band);
+  const bandPad = new THREE.Mesh(new THREE.TorusGeometry(R - 0.014, 0.012, 12, 40, Math.PI), soft);
+  g.add(bandPad);
 
   for (const sx of [-1, 1]) {
     const ex = sx * R;
-    g.add(strut(new THREE.Vector3(ex, 0, 0), new THREE.Vector3(ex, -0.035, 0), 0.008, blk));
-    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.052, 0.036, 24), blk);
-    cup.rotation.x = Math.PI / 2; // axis -> Z (faces the room)
-    cup.position.set(ex, -0.055, 0);
+    // metal slider/yoke from the band end down to the cup
+    g.add(strut(new THREE.Vector3(ex, 0.01, 0), new THREE.Vector3(ex, -0.055, 0), 0.007, accent));
+    // earcup outer shell
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.066, 0.062, 0.042, 30), blk);
+    cup.rotation.x = Math.PI / 2; // axis -> Z (broad face toward the room)
+    cup.position.set(ex, -0.08, 0);
     g.add(cup);
-    const pad = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.016, 12, 24), cushion);
-    pad.position.set(ex, -0.055, 0.02);
+    // outer plate (toward the wall)
+    const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, 0.006, 30), accent);
+    plate.rotation.x = Math.PI / 2;
+    plate.position.set(ex, -0.08, -0.024);
+    g.add(plate);
+    // soft ear cushion (toward the room)
+    const pad = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.021, 14, 30), soft);
+    pad.position.set(ex, -0.08, 0.024);
     g.add(pad);
   }
   return g;
@@ -288,9 +308,10 @@ export function createDeskGear() {
   bottle.position.set(2.95, Y, -2.45);
   g.add(bottle);
 
-  // headset hung on the back wall, just right of the monitor, near the screen
+  // headset hung on the right wall (X=+4), facing into the room, near the desk
   const headset = buildHeadset();
-  headset.position.set(2.6, 1.55, -3.84);
+  headset.rotation.y = -Math.PI / 2; // local +Z -> world -X
+  headset.position.set(3.85, 1.6, -2.8);
   g.add(headset);
 
   return g;
