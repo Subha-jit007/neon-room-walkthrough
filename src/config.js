@@ -19,6 +19,11 @@ export const CONFIG = {
   // None of these are the wall posters (Poster1/2/3_*), which stay intact.
   HIDE_OBJECTS: ['P1_', 'P2_', 'P3_', 'Rug', 'Plant_Neon'],
 
+  // Exact object names to strip (no prefix matching). The basic model keyboard
+  // and mouse are replaced by detailed versions in gear.js; using a prefix here
+  // would also hide 'Mousepad', which we keep.
+  HIDE_EXACT: ['Keyboard', 'Mouse'],
+
   // The floor is rendered as a lit chessboard. `size` is the square edge in
   // metres (8x8 m floor with size 1 => an 8x8 board); light/dark are the
   // square colours.

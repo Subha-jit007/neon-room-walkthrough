@@ -10,6 +10,7 @@ import { createScreenMaterial } from './screenVideo.js';
 import { createWallArt, createFlowerPaintings } from './wallArt.js';
 import { createWallPosters } from './wallPosters.js';
 import { createSwordDisplay } from './swords.js';
+import { createDeskGear } from './gear.js';
 import { initPhysics } from './physics.js';
 
 const loader = new GLTFLoader();
@@ -56,7 +57,11 @@ export function loadModel(url, isBlob = false) {
 }
 
 const hidePrefixes = CONFIG.HIDE_OBJECTS.map((p) => p.toLowerCase());
-const shouldHide = (name) => hidePrefixes.some((p) => (name || '').toLowerCase().startsWith(p));
+const hideExact = (CONFIG.HIDE_EXACT || []).map((p) => p.toLowerCase());
+const shouldHide = (name) => {
+  const n = (name || '').toLowerCase();
+  return hidePrefixes.some((p) => n.startsWith(p)) || hideExact.includes(n);
+};
 
 function onLoaded(root) {
   // Make the shell solid from the inside, strip emissive glow, and collect
@@ -127,6 +132,10 @@ function onLoaded(root) {
 
   // Mount a detailed daishō (katana + wakizashi) on the door/front wall.
   scene.add(createSwordDisplay());
+
+  // Detailed desk gear: RGB keyboard, mouse, ring light, bottle, and a headset
+  // hung on the wall to the right of the monitor.
+  scene.add(createDeskGear());
 
   // Derive interior movement bounds from the model's bounding box.
   const box = new THREE.Box3().setFromObject(root);
